@@ -14,7 +14,7 @@ Este projeto aplica técnicas de machine learning para prever a presença de doe
 ## Estrutura do Projeto
 
 - **modelos**: Pasta onde os modelos treinados e otimizados são salvos.
-- **notebook.ipynb**: Notebook do Google Colab com o código do projeto, incluindo a explicação do problema.
+- **MachineLearning.ipynb**: Notebook do Google Colab com o código do projeto, incluindo a explicação do problema.
 - **test_model.py**: Script de teste automatizado usando PyTest.
 - **templates**: Pasta onde o Front-End está localizado.
 - **README.md**: Este arquivo de documentação.
