@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Previsão de Doença Cardíaca</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            width: 48%;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="number"], select {
+            width: calc(100% - 10px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Estilos para o popup */
+        .modal {
+            display: none; /* Oculto por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo escurecido */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .result-box {
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .no-risk {
+            background-color: #28a745;
+        }
+
+        .low-risk {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .moderate-risk {
+            background-color: #fd7e14;
+        }
+
+        .high-risk {
+            background-color: #dc3545;
+        }
+
+        .very-high-risk {
+            background-color: #6f42c1;
+        }
+    </style>
+</head>
+<body>
+    <form id="predictionForm">
+        <h1>Predição de Doença Cardíaca</h1>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="age">Idade:</label>
+                <input type="number" id="age" name="age" placeholder="Exemplo: 57">
+            </div>
+
+            <div class="form-group">
+                <label for="sex">Sexo (1 = Masculino, 0 = Feminino):</label>
+                <input type="number" id="sex" name="sex" placeholder="Exemplo: 1" min="0" max="1">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="cp">Dor no Peito (0 a 3):</label>
+                <input type="number" id="cp" name="cp" placeholder="Exemplo: 2"  min="0" max="3">
+            </div>
+
+            <div class="form-group">
+                <label for="trestbps">Pressão Arterial em Repouso (mm Hg):</label>
+                <input type="number" id="trestbps" name="trestbps" placeholder="Exemplo: 130">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="chol">Colesterol Sérico (mg/dl):</label>
+                <input type="number" id="chol" name="chol" placeholder="Exemplo: 250">
+            </div>
+
+            <div class="form-group">
+                <label for="fbs">Açúcar no Sangue em Jejum (> 120 mg/dl, 1 = Verdadeiro, 0 = Falso):</label>
+                <input type="number" id="fbs" name="fbs" placeholder="Exemplo: 0"  min="0" max="1">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="restecg">Resultados Eletrocardiográficos em Repouso (0, 1 ou 2):</label>
+                <input type="number" id="restecg" name="restecg" placeholder="Exemplo: 1"  min="0" max="2">
+            </div>
+
+            <div class="form-group">
+                <label for="thalach">Frequência Cardíaca Máxima Alcançada:</label>
+                <input type="number" id="thalach" name="thalach" placeholder="Exemplo: 150">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="exang">Angina Induzida por Exercício (1 = Sim, 0 = Não):</label>
+                <input type="number" id="exang" name="exang" placeholder="Exemplo: 0"  min="0" max="1">
+            </div>
+
+            <div class="form-group">
+                <label for="oldpeak">Depressão do Segmento ST Induzida por Exercício:</label>
+                <input type="number" id="oldpeak" name="oldpeak" placeholder="Exemplo: 2">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="slope">Inclinação do Segmento ST (0 = Ascendente, 1 = Plano, 2 = Descendente):</label>
+                <input type="number" id="slope" name="slope" placeholder="Exemplo: 1"  min="0" max="2">
+            </div>
+
+            <div class="form-group">
+                <label for="ca">Número de Vasos Principais Coloridos pela Fluoroscopia (0 a 3):</label>
+                <input type="number" id="ca" name="ca" placeholder="Exemplo: 0"  min="0" max="3">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="thal">Thalassemia (1 = Normal, 2 = Defeito Fixo, 3 = Defeito Reversível):</label>
+                <input type="number" id="thal" name="thal" placeholder="Exemplo: 2"  min="0" max="3">
+            </div>
+
+            <div class="form-group">
+                <label for="model">Selecione o modelo:</label>
+                <select id="model" name="model">
+                    <option value="knn">KNN</option>
+                    <option value="tree">Árvore de Decisão</option>
+                    <option value="nb">Naive Bayes</option>
+                    <option value="svm">SVM</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="result" class="result-box"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').onsubmit = function(e) {
+            e.preventDefault();
+            let features = [
+                parseInt(document.getElementById('age').value),
+                parseInt(document.getElementById('sex').value),
+                parseInt(document.getElementById('cp').value),
+                parseInt(document.getElementById('trestbps').value),
+                parseInt(document.getElementById('chol').value),
+                parseInt(document.getElementById('fbs').value),
+                parseInt(document.getElementById('restecg').value),
+                parseInt(document.getElementById('thalach').value),
+                parseInt(document.getElementById('exang').value),
+                parseFloat(document.getElementById('oldpeak').value),
+                parseInt(document.getElementById('slope').value),
+                parseInt(document.getElementById('ca').value),
+                parseInt(document.getElementById('thal').value)
+            ];
+
+            let model = document.getElementById('model').value;
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({features: features, model: model}),
+            }).then(response => response.json())
+              .then(data => {
+                let resultBox = document.getElementById('result');
+                let resultModal = document.getElementById('resultModal');
+                let closeModal = document.getElementsByClassName('close')[0];
+                
+                resultBox.className = 'result-box';
+
+                let resultText;
+                switch(data.prediction) {
+                    case 0:
+                        resultText = "0 - O paciente não possui risco de doença cardíaca.";
+                        resultBox.classList.add('no-risk');
+                        break;
+                    case 1:
+                        resultText = "1 - O paciente possui risco mínimo de doença cardíaca.";
+                        resultBox.classList.add('low-risk');
+                        break;
+                    case 2:
+                        resultText = "2 - O paciente possui risco moderado de doença cardíaca.";
+                        resultBox.classList.add('moderate-risk');
+                        break;
+                    case 3:
+                        resultText = "3 - O paciente possui risco alto de doença cardíaca.";
+                        resultBox.classList.add('high-risk');
+                        break;
+                    case 4:
+                        resultText = "4 - O paciente possui risco muito alto de doença cardíaca.";
+                        resultBox.classList.add('very-high-risk');
+                        break;
+                    default:
+                        resultText = "Resultado desconhecido.";
+                }
+
+                resultBox.innerText = resultText;
+
+                resultModal.style.display = 'block';
+
+                closeModal.onclick = function() {
+                    resultModal.style.display = 'none';
+                }
+
+                window.onclick = function(event) {
+                    if (event.target == resultModal) {
+                        resultModal.style.display = 'none';
+                    }
+                }
+              });
+        };
+    </script>
+</body>
+</html>
